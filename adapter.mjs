@@ -366,10 +366,23 @@ function transformItem(item) {
       item.name = name;
     }
   }
+
+  if (typeof item.id === 'string' && item.id.includes(':')) {
+    item.id = item.id.replace(/:/g, '_');
+  }
+  if (typeof item.call_id === 'string' && item.call_id.includes(':')) {
+    item.call_id = item.call_id.replace(/:/g, '_');
+  }
 }
 
 function transformPayload(payload) {
   if (!payload || typeof payload !== 'object') return;
+  if (typeof payload.id === 'string' && payload.id.includes(':')) {
+    payload.id = payload.id.replace(/:/g, '_');
+  }
+  if (typeof payload.item_id === 'string' && payload.item_id.includes(':')) {
+    payload.item_id = payload.item_id.replace(/:/g, '_');
+  }
   if (payload.item) {
     transformItem(payload.item);
   }
