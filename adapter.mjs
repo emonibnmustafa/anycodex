@@ -328,6 +328,9 @@ function transformItem(item) {
   if (item.name === 'exec' || (typeof item.name === 'string' && item.name.endsWith('__exec'))) {
     item.type = 'custom_tool_call';
     item.name = 'exec';
+    if (typeof item.id === 'string' && item.id.startsWith('fc_')) {
+      item.id = 'ctc_' + item.id.slice(3);
+    }
     delete item.namespace;
     if (item.arguments !== undefined) {
       try {

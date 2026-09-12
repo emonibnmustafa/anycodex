@@ -97,13 +97,17 @@ def reset_sqlite_threads_to_openai():
 
 def switch_to_openai():
     content = read_codex_config()
+    content = re.sub(r'\[model_providers\.[^\]]+\][\s\S]*?(?=\n\[|\Z)', '', content)
     content = re.sub(r'^\s*model_provider\s*=\s*["\'][^"\']+["\']\n?', '', content, flags=re.MULTILINE)
     content = re.sub(r'^\s*model_catalog_json\s*=\s*["\'][^"\']+["\']\n?', '', content, flags=re.MULTILINE)
-    content = re.sub(r'^\s*model\s*=\s*["\'][^"\']+["\']', 'model = "gpt-5.5"', content, flags=re.MULTILINE)
+    content = re.sub(r'^\s*model\s*=\s*["\'][^"\']+["\']', 'model = "gpt-5.6-sol"', content, flags=re.MULTILINE)
     content = re.sub(r'\n{3,}', '\n\n', content)
     write_codex_config(content)
     reset_sqlite_threads_to_openai()
-
+    try:
+        subprocess.run(["pkill", "-f", "adapter.mjs"], capture_output=True)
+    except Exception:
+        pass
     print("✅ Switched to ChatGPT Plus (OpenAI) native mode!")
     print("   • Default Model: GPT-5.5 / GPT-5.6")
     print("   • Plus features, usage meters & chat modes active.")
