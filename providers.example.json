@@ -1,0 +1,40 @@
+{
+  "active_provider": "meta",
+  "providers": {
+    "meta": {
+      "name": "Meta Muse Spark (Unlimited Free)",
+      "base_url": "https://api.meta.ai",
+      "api_key": "YOUR_META_API_KEY_HERE",
+      "model": "muse-spark-1.3-contributor",
+      "wire_api": "responses"
+    },
+    "deepseek": {
+      "name": "DeepSeek Coder",
+      "base_url": "https://api.deepseek.com",
+      "api_key": "YOUR_DEEPSEEK_API_KEY_HERE",
+      "model": "deepseek-coder",
+      "wire_api": "responses"
+    },
+    "groq": {
+      "name": "Groq Llama 3.3",
+      "base_url": "https://api.groq.com/openai",
+      "api_key": "YOUR_GROQ_API_KEY_HERE",
+      "model": "llama-3.3-70b-versatile",
+      "wire_api": "responses"
+    },
+    "ollama": {
+      "name": "Local Ollama",
+      "base_url": "http://127.0.0.1:11434",
+      "api_key": "ollama",
+      "model": "qwen2.5-coder:latest",
+      "wire_api": "responses"
+    },
+    "openrouter": {
+      "name": "OpenRouter",
+      "base_url": "https://openrouter.ai/api",
+      "api_key": "YOUR_OPENROUTER_API_KEY_HERE",
+      "model": "anthropic/claude-3.5-sonnet",
+      "wire_api": "responses"
+    }
+  }
+}
