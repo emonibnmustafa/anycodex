@@ -27,7 +27,7 @@ OpenAI Codex and the official ChatGPT Desktop application are incredible tools f
 Run this single command in your macOS Terminal:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/__REPO_PLACEHOLDER__/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/emonibnmustafa/anycodex/main/install.sh | bash
 ```
 
 > **What this does automatically:**
@@ -42,7 +42,7 @@ curl -fsSL https://raw.githubusercontent.com/__REPO_PLACEHOLDER__/main/install.s
 
 ### Alternative: Manual Git Clone
 ```bash
-git clone https://github.com/__REPO_PLACEHOLDER__.git
+git clone https://github.com/emonibnmustafa/anycodex.git
 cd anycodex
 ./install.sh
 source ~/.zshrc
@@ -177,7 +177,7 @@ flowchart LR
 
 To completely remove AnyCodex and revert your Codex app to native OpenAI settings:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/__REPO_PLACEHOLDER__/main/uninstall.sh | bash
+curl -fsSL https://raw.githubusercontent.com/emonibnmustafa/anycodex/main/uninstall.sh | bash
 ```
 *(Or run `./uninstall.sh` if you have the repository locally).*
 

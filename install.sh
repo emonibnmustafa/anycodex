@@ -30,7 +30,7 @@ PLIST_DIR="$HOME/Library/LaunchAgents"
 PLIST_LABEL="com.codex.anycodex-adapter"
 PLIST_FILE="$PLIST_DIR/$PLIST_LABEL.plist"
 NODE_PATH="$(command -v node)"
-GITHUB_REPO="${ANYCODEX_REPO:-__REPO_PLACEHOLDER__}"
+GITHUB_REPO="${ANYCODEX_REPO:-emonibnmustafa/anycodex}"
 RAW_BASE_URL="https://raw.githubusercontent.com/${GITHUB_REPO}/main"
 
 echo "📦 Setting up AnyCodex directory at: $TARGET_DIR"
