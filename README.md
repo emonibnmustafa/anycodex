@@ -22,28 +22,30 @@ OpenAI Codex and the official ChatGPT Desktop application are incredible tools f
 
 ---
 
-## 🚀 1-Minute Quick Start
+## 🚀 1-Command Quick Start (Zero Setup)
 
-### 1. Clone & Install
+Run this single command in your macOS Terminal:
+
 ```bash
-git clone https://github.com/your-username/anycodex.git
+curl -fsSL https://raw.githubusercontent.com/__REPO_PLACEHOLDER__/main/install.sh | bash
+```
+
+> **What this does automatically:**
+> 1. Sets up the local AnyCodex gateway in `~/.codex/anycodex`.
+> 2. Starts the zero-config background daemon (`com.codex.anycodex-adapter`).
+> 3. Adds fast CLI shortcuts (`anycodex`, `usemeta`, `useopenai`, `setmeta`).
+> 4. Prompts you right in the terminal to paste your API key (optional).
+> 
+> *No manual file editing, no cloning, no background process management required.*
+
+---
+
+### Alternative: Manual Git Clone
+```bash
+git clone https://github.com/__REPO_PLACEHOLDER__.git
 cd anycodex
 ./install.sh
-```
-
-### 2. Reload Your Shell
-```bash
-source ~/.zshrc    # or source ~/.bashrc if using bash
-```
-
-### 3. Switch to Your Desired Provider
-```bash
-# Example: Use Meta Muse Spark (Free unlimited coding)
-setmeta "YOUR_META_API_KEY"
-usemeta
-
-# Or switch right back to native ChatGPT Plus anytime:
-useopenai
+source ~/.zshrc
 ```
 
 ---
@@ -171,12 +173,13 @@ flowchart LR
 
 ---
 
-## 🗑️ Uninstallation
+## 🗑️ 1-Command Uninstallation
 
 To completely remove AnyCodex and revert your Codex app to native OpenAI settings:
 ```bash
-./uninstall.sh
+curl -fsSL https://raw.githubusercontent.com/__REPO_PLACEHOLDER__/main/uninstall.sh | bash
 ```
+*(Or run `./uninstall.sh` if you have the repository locally).*
 
 ---
 
