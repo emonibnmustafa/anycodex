@@ -6,7 +6,10 @@ import os from 'node:os';
 import crypto from 'node:crypto';
 
 const PORT = 8765;
-const CODEX_DIR = path.join(os.homedir(), '.codex');
+const CODEX_DIR = process.env.CODEX_HOME || 
+  (fs.existsSync(path.join(os.homedir(), '.codex-meta', 'custom_providers.json'))
+    ? path.join(os.homedir(), '.codex-meta')
+    : path.join(os.homedir(), '.codex'));
 const PROVIDERS_CONFIG_PATH = path.join(CODEX_DIR, 'custom_providers.json');
 const LEGACY_KEY_FILE = path.join(CODEX_DIR, 'meta_key.txt');
 
