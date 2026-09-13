@@ -1,4 +1,4 @@
-# ⚡ Open AnyCodex
+# ⚡ AnyCodex
 
 > **Run ANY LLM (Meta Muse Spark, DeepSeek, Groq, Ollama, OpenRouter) inside OpenAI Codex & ChatGPT Desktop with 100% Tool Parity — Full Computer Use (CUA), Code Mode, and Zero Subscription Limits.**
 
@@ -9,17 +9,17 @@
 
 ---
 
-## 🌟 Why Open AnyCodex?
+## 🌟 Why AnyCodex?
 
 OpenAI Codex and the official ChatGPT Desktop application are revolutionary tools for coding, pairing, and automating your screen with **Computer Use**. However:
 - OpenAI rate limits and usage caps quickly run out during heavy programming sessions.
 - Developers often want to use **unlimited free models** like **Meta Muse Spark**, ultra-fast models like **Groq**, cost-effective powerhouses like **DeepSeek**, or 100% private local offline models via **Ollama**.
 - Until now, switching providers broke tools, corrupted thread histories, or required sacrificing desktop automation.
 
-**Open AnyCodex** completely solves this. It functions as an ultra-fast, local translation gateway and profile manager that connects Codex Desktop to **any OpenAI-compatible LLM endpoint** with:
+**AnyCodex** completely solves this. It functions as an ultra-fast, local translation gateway and profile manager that connects Codex Desktop to **any OpenAI-compatible LLM endpoint** with:
 - 🖱️ **100% Full Computer Use (CUA) Parity**: Real mouse clicks, keystrokes, screenshots, window control, and browser automation.
 - 💻 **100% Code Mode Parity**: Instant local bash execution, terminal interaction, file editing, and test verification.
-- 🪟 **Side-by-Side Dual-App Mode**: Run official ChatGPT Plus (OpenAI) and Open AnyCodex at the exact same time without profile or session conflicts.
+- 🪟 **Side-by-Side Dual-App Mode**: Run official ChatGPT Plus (OpenAI) and AnyCodex at the exact same time without profile or session conflicts.
 - 🔄 **Instant 1-Command Hot-Switching**: Seamlessly toggle between providers (`anycodex use meta`, `anycodex use deepseek`, `anycodex use openai`).
 - 🔒 **100% Local & Zero Telemetry**: Operates exclusively on `127.0.0.1:8765`. Your API keys, code, and prompts never touch third-party servers.
 
@@ -45,7 +45,7 @@ irm https://raw.githubusercontent.com/emonibnmustafa/anycodex/main/install.ps1 |
 > 1. Sets up the local AnyCodex gateway in `~/.codex/anycodex`.
 > 2. Starts the zero-config background daemon (`launchd` on macOS, Startup service on Windows).
 > 3. Adds fast CLI shortcuts (`anycodex`, `usemeta`, `useopenai`).
-> 4. Offers to create the standalone **Side-by-Side App** so you can run ChatGPT Plus and Open AnyCodex concurrently!
+> 4. Offers to create the standalone **Side-by-Side App** so you can run ChatGPT Plus and AnyCodex concurrently!
 
 ---
 
@@ -61,7 +61,7 @@ anycodex dual-app
 | App | Location | Model Used | Profile & Storage | Best For |
 | :--- | :--- | :--- | :--- | :--- |
 | **ChatGPT (Official)** | Applications / Start Menu | OpenAI `GPT-5.6 Sol` | Default (`~/.codex`) | Official Plus account tasks |
-| **Open AnyCodex** | Applications / Desktop | `Meta Muse Spark` / Custom | Isolated (`~/.codex-anycodex`) | Unlimited free heavy coding & long pairing sessions |
+| **AnyCodex** | Applications / Desktop | `Meta Muse Spark` / Custom | Isolated (`~/.codex-anycodex`) | Unlimited free heavy coding & long pairing sessions |
 
 - **Zero Extra Storage:** On macOS, utilizes APFS Copy-on-Write cloning (0 MB extra disk space).
 - **Independent Profiles:** Separate Chromium user data directories and separate SQLite databases ensure windows, cookies, and chat threads NEVER collide.
@@ -143,7 +143,7 @@ AnyCodex comes with an intuitive, cross-platform CLI:
                            │ HTTP / SSE Stream
                            ▼
 ┌────────────────────────────────────────────────────────┐
-│           Open AnyCodex Gateway (127.0.0.1:8765)        │
+│           AnyCodex Gateway (127.0.0.1:8765)        │
 │  • Bidirectional Tool Translation (exec <-> CUA)       │
 │  • Strict-Mode Schema Flattening & Normalization       │
 │  • 64-Character Tool Name Length Clamping & Mapping    │
@@ -159,14 +159,14 @@ AnyCodex comes with an intuitive, cross-platform CLI:
 
 ### Key Technical Innovations
 1. **Bidirectional Code Mode Bridge:** Translates Codex's internal V8 isolate `custom_tool_call` on `exec` into standard OpenAPI function calls, and maps upstream results back to Codex flawlessly.
-2. **Strict-Mode Schema Sanitizer:** Upstream function-calling validators (like Meta's) reject combiners like `oneOf`/`anyOf`/`allOf` at the root parameters level. Open AnyCodex flattens and normalizes schemas into clean objects.
-3. **Deterministic 64-Character Name Mapper:** Codex plugins often emit 70–90 character tool names. Open AnyCodex safely clamps and bi-directionally maps names under the 64-character limit.
+2. **Strict-Mode Schema Sanitizer:** Upstream function-calling validators (like Meta's) reject combiners like `oneOf`/`anyOf`/`allOf` at the root parameters level. AnyCodex flattens and normalizes schemas into clean objects.
+3. **Deterministic 64-Character Name Mapper:** Codex plugins often emit 70–90 character tool names. AnyCodex safely clamps and bi-directionally maps names under the 64-character limit.
 
 ---
 
 ## 🗑️ Uninstallation
 
-If you ever wish to completely remove Open AnyCodex:
+If you ever wish to completely remove AnyCodex:
 
 ### macOS:
 ```bash

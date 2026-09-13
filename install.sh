@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-# Open AnyCodex Installer
+# AnyCodex Installer
 # Run ANY LLM in OpenAI Codex & ChatGPT Desktop with 100% Tool Parity (Computer Use, Code Mode, Zero Limits).
 # GitHub: https://github.com/emonibnmustafa/anycodex
 
@@ -38,7 +38,7 @@ NODE_PATH="$(command -v node)"
 GITHUB_REPO="${ANYCODEX_REPO:-emonibnmustafa/anycodex}"
 RAW_BASE_URL="https://raw.githubusercontent.com/${GITHUB_REPO}/main"
 
-echo "📦 Setting up Open AnyCodex at: $TARGET_DIR"
+echo "📦 Setting up AnyCodex at: $TARGET_DIR"
 mkdir -p "$TARGET_DIR"
 mkdir -p "$HOME/.codex"
 mkdir -p "$PLIST_DIR"
@@ -57,7 +57,7 @@ if [ -n "$SCRIPT_DIR" ] && [ -f "$SCRIPT_DIR/adapter.mjs" ]; then
     cp "$SCRIPT_DIR/providers.example.json" "$TARGET_DIR/providers.example.json"
   fi
 else
-  echo "🌐 Downloading latest Open AnyCodex components..."
+  echo "🌐 Downloading latest AnyCodex components..."
   curl -fsSL "${RAW_BASE_URL}/adapter.mjs" -o "$TARGET_DIR/adapter.mjs"
   curl -fsSL "${RAW_BASE_URL}/codex_switch.py" -o "$TARGET_DIR/codex_switch.py"
   curl -fsSL "${RAW_BASE_URL}/uninstall.sh" -o "$TARGET_DIR/uninstall.sh" 2>/dev/null || true
@@ -118,7 +118,7 @@ add_shell_helpers() {
     if ! grep -q "anycodex" "$RC_FILE"; then
       cat << 'RC_EOF' >> "$RC_FILE"
 
-# --- Open AnyCodex CLI Helpers ---
+# --- AnyCodex CLI Helpers ---
 anycodex() { python3 "$HOME/.codex/anycodex/codex_switch.py" "$@"; }
 usemeta() { anycodex use meta; }
 useopenai() { anycodex use openai; }
@@ -136,7 +136,7 @@ add_shell_helpers "$HOME/.bashrc"
 # 4. Interactive Dual-App Setup or API Key
 echo ""
 echo "============================================================"
-echo "           🎉 Open AnyCodex Core Setup Complete!            "
+echo "           🎉 AnyCodex Core Setup Complete!            "
 echo "============================================================"
 echo "Gateway running on: http://127.0.0.1:8765/v1"
 echo ""
@@ -144,7 +144,7 @@ echo ""
 if [[ "$1" == "--dual-app" ]]; then
   python3 "$TARGET_DIR/codex_switch.py" dual-app
 else
-  echo "💡 TIP: Want to run official ChatGPT Plus AND Open AnyCodex"
+  echo "💡 TIP: Want to run official ChatGPT Plus AND AnyCodex"
   echo "   side-by-side at the exact same time without switching?"
   echo "   Run: anycodex dual-app"
 fi

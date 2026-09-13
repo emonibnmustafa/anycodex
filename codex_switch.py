@@ -210,9 +210,9 @@ def add_provider():
 
 def setup_dual_app():
     print("\n========================================================")
-    print("      🚀 Open AnyCodex Dual-App Setup (Side-by-Side)     ")
+    print("      🚀 AnyCodex Dual-App Setup (Side-by-Side)     ")
     print("========================================================")
-    print("This sets up a dedicated second app ('Open AnyCodex')")
+    print("This sets up a dedicated second app ('AnyCodex')")
     print("so you can run ChatGPT Plus and your custom models")
     print("at the exact same time without switching modes!\n")
 
@@ -243,7 +243,7 @@ def setup_dual_app():
             return
 
         dest_dir = os.path.dirname(source_app)
-        target_app = os.path.join(dest_dir, "Open AnyCodex.app")
+        target_app = os.path.join(dest_dir, "AnyCodex.app")
         print(f"📦 Source App : {source_app}")
         print(f"🎯 Target App : {target_app}")
 
@@ -256,8 +256,8 @@ def setup_dual_app():
         # 2. Update Info.plist
         plist_path = os.path.join(target_app, "Contents", "Info.plist")
         subprocess.run(["/usr/libexec/PlistBuddy", "-c", "Set :CFBundleIdentifier com.openai.codex.anycodex", plist_path], capture_output=True)
-        subprocess.run(["/usr/libexec/PlistBuddy", "-c", "Set :CFBundleName Open AnyCodex", plist_path], capture_output=True)
-        subprocess.run(["/usr/libexec/PlistBuddy", "-c", "Set :CFBundleDisplayName Open AnyCodex", plist_path], capture_output=True)
+        subprocess.run(["/usr/libexec/PlistBuddy", "-c", "Set :CFBundleName AnyCodex", plist_path], capture_output=True)
+        subprocess.run(["/usr/libexec/PlistBuddy", "-c", "Set :CFBundleDisplayName AnyCodex", plist_path], capture_output=True)
 
         # 3. Setup isolated config directory
         meta_dir = os.path.join(HOME, ".codex-anycodex")
@@ -359,7 +359,7 @@ int main(int argc, char *argv[]) {{
         # Symlink into ~/Applications for Spotlight
         user_apps = os.path.expanduser("~/Applications")
         os.makedirs(user_apps, exist_ok=True)
-        link_path = os.path.join(user_apps, "Open AnyCodex.app")
+        link_path = os.path.join(user_apps, "AnyCodex.app")
         try:
             if os.path.islink(link_path):
                 os.unlink(link_path)
@@ -367,9 +367,9 @@ int main(int argc, char *argv[]) {{
         except Exception:
             pass
 
-        print("\n🎉 SUCCESS! 'Open AnyCodex.app' is ready!")
+        print("\n🎉 SUCCESS! 'AnyCodex.app' is ready!")
         print("   • Location   : " + target_app)
-        print("   • Spotlight  : Available via Cmd+Space -> 'Open AnyCodex'")
+        print("   • Spotlight  : Available via Cmd+Space -> 'AnyCodex'")
         print("   • Isolation  : Fully separate profile & history (~/.codex-anycodex)")
         print("   • Capability : 100% Computer Use, Plugins, and Tools Active")
         print("\nYou can now open BOTH apps side-by-side simultaneously!\n")
@@ -393,17 +393,17 @@ int main(int argc, char *argv[]) {{
         os.makedirs(user_data, exist_ok=True)
 
         # Create AnyCodex.cmd batch launcher
-        cmd_path = os.path.join(HOME, "Desktop", "Open AnyCodex.cmd")
+        cmd_path = os.path.join(HOME, "Desktop", "AnyCodex.cmd")
         with open(cmd_path, "w") as f:
             f.write(f'''@echo off
 set "CODEX_HOME={meta_dir}"
 start "" "{exe_path or 'ChatGPT.exe'}" --user-data-dir="{user_data}" %*
 ''')
 
-        print("\n🎉 SUCCESS! 'Open AnyCodex' shortcut created on your Desktop!")
+        print("\n🎉 SUCCESS! 'AnyCodex' shortcut created on your Desktop!")
         print(f"   • Shortcut : {cmd_path}")
         print(f"   • Isolation: Fully separate profile & history ({meta_dir})")
-        print("You can now open official ChatGPT and Open AnyCodex simultaneously!\n")
+        print("You can now open official ChatGPT and AnyCodex simultaneously!\n")
 
 def print_status():
     content = read_codex_config()
@@ -434,7 +434,7 @@ def print_status():
         print("  CUA & Tools : Fully Enabled")
     print("========================================")
     print("Quick Commands:")
-    print("  anycodex dual-app            -> Setup standalone 'Open AnyCodex' side-by-side app")
+    print("  anycodex dual-app            -> Setup standalone 'AnyCodex' side-by-side app")
     print("  anycodex use <provider>      -> Switch active provider (meta, deepseek, groq, ollama)")
     print("  anycodex use openai          -> Switch back to official ChatGPT Plus")
     print("  anycodex set-key <prov> <key>-> Update API key instantly")

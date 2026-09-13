@@ -1,4 +1,4 @@
-# Open AnyCodex Windows Installer (PowerShell)
+# AnyCodex Windows Installer (PowerShell)
 # Run ANY LLM in OpenAI Codex & ChatGPT Desktop with 100% Tool Parity.
 # GitHub: https://github.com/emonibnmustafa/anycodex
 
@@ -27,12 +27,12 @@ $TargetDir = Join-Path $CodexDir "anycodex"
 $Repo = "emonibnmustafa/anycodex"
 $BaseUrl = "https://raw.githubusercontent.com/$Repo/main"
 
-Write-Host "📦 Setting up Open AnyCodex directory at: $TargetDir" -ForegroundColor Green
+Write-Host "📦 Setting up AnyCodex directory at: $TargetDir" -ForegroundColor Green
 New-Item -ItemType Directory -Force -Path $TargetDir | Out-Null
 New-Item -ItemType Directory -Force -Path $CodexDir | Out-Null
 
 # Download components
-Write-Host "🌐 Downloading Open AnyCodex components..." -ForegroundColor Green
+Write-Host "🌐 Downloading AnyCodex components..." -ForegroundColor Green
 Invoke-WebRequest -Uri "$BaseUrl/adapter.mjs" -OutFile (Join-Path $TargetDir "adapter.mjs")
 Invoke-WebRequest -Uri "$BaseUrl/codex_switch.py" -OutFile (Join-Path $TargetDir "codex_switch.py")
 Invoke-WebRequest -Uri "$BaseUrl/providers.example.json" -OutFile (Join-Path $TargetDir "providers.example.json")
@@ -68,7 +68,7 @@ $ProfileContent = Get-Content $ProfilePath -Raw -ErrorAction SilentlyContinue
 if ($ProfileContent -notmatch "anycodex") {
     $AliasBlock = @"
 
-# --- Open AnyCodex CLI Helpers ---
+# --- AnyCodex CLI Helpers ---
 function anycodex { python "$TargetDir\codex_switch.py" `$args }
 function usemeta { anycodex use meta }
 function useopenai { anycodex use openai }
@@ -82,10 +82,10 @@ function setmeta { param(`$key) anycodex set-key meta `$key }
 # 5. Dual-App Setup on Windows
 Write-Host ""
 Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host "           🎉 Open AnyCodex Installation Complete!          " -ForegroundColor Cyan
+Write-Host "           🎉 AnyCodex Installation Complete!          " -ForegroundColor Cyan
 Write-Host "============================================================" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "Setting up 'Open AnyCodex' Desktop shortcut..." -ForegroundColor Yellow
+Write-Host "Setting up 'AnyCodex' Desktop shortcut..." -ForegroundColor Yellow
 python (Join-Path $TargetDir "codex_switch.py") dual-app
 
 Write-Host "Commands to get started:" -ForegroundColor Cyan
