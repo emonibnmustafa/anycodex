@@ -57,22 +57,55 @@ function cleanToolName(str) {
   return (str || '').replace(/[^a-zA-Z0-9_-]/g, '_');
 }
 
-function sanitizeSchema(schema) {
+function sanitizeSchema(schema, isTopLevel = false) {
   if (!schema || typeof schema !== 'object') return schema;
 
-  // Convert oneOf to anyOf because Meta / strict function-calling rejects oneOf
-  if ('oneOf' in schema) {
-    if (Array.isArray(schema.oneOf)) {
-      schema.anyOf = schema.oneOf;
-    }
-    delete schema.oneOf;
-  }
-
-  // Delete unsupported schema keywords in strict mode
+  // Delete universally unsupported keywords
   delete schema.$schema;
   delete schema.$id;
   delete schema.not;
 
+  // Handle oneOf: convert to anyOf (Meta strict rejects oneOf everywhere)
+  if (Array.isArray(schema.oneOf)) {
+    schema.anyOf = schema.oneOf;
+    delete schema.oneOf;
+  }
+
+  // At the TOP LEVEL of parameters, Meta strict rejects anyOf/allOf/enum too
+  if (isTopLevel) {
+    // Flatten allOf by merging all sub-schemas
+    if (Array.isArray(schema.allOf)) {
+      for (const sub of schema.allOf) {
+        if (sub && typeof sub === 'object') {
+          if (sub.properties) {
+            schema.properties = { ...(schema.properties || {}), ...sub.properties };
+          }
+          if (Array.isArray(sub.required)) {
+            schema.required = [...(schema.required || []), ...sub.required];
+          }
+        }
+      }
+      delete schema.allOf;
+    }
+
+    // Flatten anyOf by merging all object sub-schemas into properties
+    if (Array.isArray(schema.anyOf)) {
+      for (const sub of schema.anyOf) {
+        if (sub && typeof sub === 'object' && (sub.type === 'object' || sub.properties)) {
+          schema.properties = { ...(schema.properties || {}), ...(sub.properties || {}) };
+          if (Array.isArray(sub.required)) {
+            schema.required = [...(schema.required || []), ...sub.required];
+          }
+        }
+      }
+      delete schema.anyOf;
+    }
+
+    // Remove enum at top level
+    delete schema.enum;
+  }
+
+  // Force type:'object' if properties exist
   if (schema.type === 'object' || schema.properties) {
     schema.type = 'object';
     if (schema.properties && typeof schema.properties === 'object') {
@@ -87,7 +120,7 @@ function sanitizeSchema(schema) {
       }
       schema.additionalProperties = false;
       for (const val of Object.values(schema.properties)) {
-        sanitizeSchema(val);
+        sanitizeSchema(val, false);
       }
     } else {
       schema.properties = {};
@@ -96,15 +129,37 @@ function sanitizeSchema(schema) {
     }
   } else if (schema.type === 'array') {
     if (schema.items) {
-      sanitizeSchema(schema.items);
+      sanitizeSchema(schema.items, false);
     } else {
       schema.items = { type: 'string' };
     }
   }
 
-  if (Array.isArray(schema.anyOf)) schema.anyOf.forEach(sanitizeSchema);
-  if (Array.isArray(schema.allOf)) schema.allOf.forEach(sanitizeSchema);
+  // Recurse into nested anyOf/allOf (safe at non-top-level)
+  if (Array.isArray(schema.anyOf)) schema.anyOf.forEach(s => sanitizeSchema(s, false));
+  if (Array.isArray(schema.allOf)) schema.allOf.forEach(s => sanitizeSchema(s, false));
   return schema;
+}
+
+// Ensure tool parameters is always a clean top-level object schema
+function sanitizeToolParams(params) {
+  if (!params || typeof params !== 'object') {
+    return { type: 'object', properties: {}, required: [], additionalProperties: false };
+  }
+  // Run full sanitization with isTopLevel=true to strip top-level anyOf/oneOf/allOf/enum/not
+  sanitizeSchema(params, true);
+  // Guarantee type is 'object'
+  if (params.type !== 'object') {
+    params.type = 'object';
+  }
+  if (!params.properties || typeof params.properties !== 'object') {
+    params.properties = {};
+  }
+  if (!Array.isArray(params.required)) {
+    params.required = [];
+  }
+  params.additionalProperties = false;
+  return params;
 }
 
 function buildMetaTools(rawTools, rawInputs) {
@@ -177,7 +232,7 @@ function buildMetaTools(rawTools, rawInputs) {
             type: 'function',
             name: metaName,
             description: desc,
-            parameters: sanitizeSchema(inner.parameters || { type: 'object', properties: {} }),
+            parameters: sanitizeToolParams(inner.parameters || { type: 'object', properties: {} }),
             strict: true
           });
         }
@@ -211,7 +266,7 @@ function buildMetaTools(rawTools, rawInputs) {
         type: 'function',
         name: cleanName,
         description: t.description || t.name || 'tool function',
-        parameters: sanitizeSchema(t.parameters || { type: 'object', properties: {} }),
+        parameters: sanitizeToolParams(t.parameters || { type: 'object', properties: {} }),
         strict: true
       });
     }
