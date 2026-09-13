@@ -59,6 +59,20 @@ function cleanToolName(str) {
 
 function sanitizeSchema(schema) {
   if (!schema || typeof schema !== 'object') return schema;
+
+  // Convert oneOf to anyOf because Meta / strict function-calling rejects oneOf
+  if ('oneOf' in schema) {
+    if (Array.isArray(schema.oneOf)) {
+      schema.anyOf = schema.oneOf;
+    }
+    delete schema.oneOf;
+  }
+
+  // Delete unsupported schema keywords in strict mode
+  delete schema.$schema;
+  delete schema.$id;
+  delete schema.not;
+
   if (schema.type === 'object' || schema.properties) {
     schema.type = 'object';
     if (schema.properties && typeof schema.properties === 'object') {
@@ -80,11 +94,15 @@ function sanitizeSchema(schema) {
       schema.required = [];
       schema.additionalProperties = false;
     }
-  } else if (schema.type === 'array' && schema.items) {
-    sanitizeSchema(schema.items);
+  } else if (schema.type === 'array') {
+    if (schema.items) {
+      sanitizeSchema(schema.items);
+    } else {
+      schema.items = { type: 'string' };
+    }
   }
+
   if (Array.isArray(schema.anyOf)) schema.anyOf.forEach(sanitizeSchema);
-  if (Array.isArray(schema.oneOf)) schema.oneOf.forEach(sanitizeSchema);
   if (Array.isArray(schema.allOf)) schema.allOf.forEach(sanitizeSchema);
   return schema;
 }
