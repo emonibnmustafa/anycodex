@@ -3,6 +3,7 @@ import https from 'node:https';
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
+import crypto from 'node:crypto';
 
 const PORT = 8765;
 const CODEX_DIR = path.join(os.homedir(), '.codex');
@@ -55,6 +56,15 @@ const toolRegistry = new Map();
 
 function cleanToolName(str) {
   return (str || '').replace(/[^a-zA-Z0-9_-]/g, '_');
+}
+
+function getUniqueMetaToolName(rawName) {
+  let name = cleanToolName(rawName);
+  if (name.length > 64) {
+    const hash = crypto.createHash('md5').update(name).digest('hex').slice(0, 8);
+    name = `${name.slice(0, 55)}_${hash}`;
+  }
+  return name;
 }
 
 function sanitizeSchema(schema, isTopLevel = false) {
@@ -176,7 +186,11 @@ function buildMetaTools(rawTools, rawInputs) {
   const metaTools = [];
 
   function addTool(tool) {
-    if (!tool || !tool.name || seenNames.has(tool.name)) return;
+    if (!tool || !tool.name) return;
+    if (tool.name.length > 64) {
+      tool.name = getUniqueMetaToolName(tool.name);
+    }
+    if (seenNames.has(tool.name)) return;
     seenNames.add(tool.name);
     metaTools.push(tool);
   }
@@ -215,7 +229,8 @@ function buildMetaTools(rawTools, rawInputs) {
           });
         } else {
           const innerClean = cleanToolName(inner.name);
-          const metaName = cleanNs ? `${cleanNs}__${innerClean}` : innerClean;
+          const rawMetaName = cleanNs ? `${cleanNs}__${innerClean}` : innerClean;
+          const metaName = getUniqueMetaToolName(rawMetaName);
           toolRegistry.set(metaName, {
             name: inner.name,
             namespace: codexNs
@@ -257,7 +272,8 @@ function buildMetaTools(rawTools, rawInputs) {
         strict: false
       });
     } else {
-      const cleanName = cleanToolName(t.name || 'tool');
+      const rawCleanName = cleanToolName(t.name || 'tool');
+      const cleanName = getUniqueMetaToolName(rawCleanName);
       toolRegistry.set(cleanName, {
         name: t.name,
         namespace: undefined
@@ -533,6 +549,10 @@ const server = http.createServer((req, res) => {
       }
 
       data.tools = buildMetaTools(data.tools, data.input);
+      if (Array.isArray(data.tools) && data.tools.length === 0) {
+        delete data.tools;
+        delete data.tool_choice;
+      }
       data.input = translateInputs(data.input);
 
       const modifiedPayload = JSON.stringify(data);
