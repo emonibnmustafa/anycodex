@@ -211,7 +211,7 @@ function buildMetaTools(rawTools, rawInputs) {
               required: ['code'],
               additionalProperties: false
             },
-            strict: true
+            strict: false
           });
         } else {
           const innerClean = cleanToolName(inner.name);
@@ -233,7 +233,7 @@ function buildMetaTools(rawTools, rawInputs) {
             name: metaName,
             description: desc,
             parameters: sanitizeToolParams(inner.parameters || { type: 'object', properties: {} }),
-            strict: true
+            strict: false
           });
         }
       }
@@ -254,7 +254,7 @@ function buildMetaTools(rawTools, rawInputs) {
           required: ['code'],
           additionalProperties: false
         },
-        strict: true
+        strict: false
       });
     } else {
       const cleanName = cleanToolName(t.name || 'tool');
@@ -267,7 +267,7 @@ function buildMetaTools(rawTools, rawInputs) {
         name: cleanName,
         description: t.description || t.name || 'tool function',
         parameters: sanitizeToolParams(t.parameters || { type: 'object', properties: {} }),
-        strict: true
+        strict: false
       });
     }
   }
