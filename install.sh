@@ -1,18 +1,23 @@
 #!/usr/bin/env bash
 set -e
 
-# AnyCodex Installer
-# Brings any LLM (Meta Muse Spark, DeepSeek, Groq, Ollama, OpenRouter) to Codex Desktop with full Computer Use and Code Mode.
+# Open AnyCodex Installer
+# Run ANY LLM in OpenAI Codex & ChatGPT Desktop with 100% Tool Parity (Computer Use, Code Mode, Zero Limits).
+# GitHub: https://github.com/emonibnmustafa/anycodex
 
-echo "====================================================="
-echo "           🚀 AnyCodex Automated Installer           "
-echo "  Run Any LLM in ChatGPT Desktop with Full Tool Parity"
-echo "====================================================="
+echo "============================================================"
+echo "               ⚡ OPEN ANYCODEX INSTALLER                   "
+echo "  Run Any LLM in ChatGPT Desktop with 100% Full Tool Parity "
+echo "============================================================"
 
-# 1. Prerequisites Check
+# 1. Platform Check
 if [[ "$OSTYPE" != "darwin"* ]]; then
-  echo "❌ AnyCodex currently supports macOS."
-  exit 1
+  if [[ "$OSTYPE" == "msys"* ]] || [[ "$OSTYPE" == "win32"* ]] || [[ "$OSTYPE" == "cygwin"* ]]; then
+    echo "💡 Detected Windows environment!"
+    echo "   For native Windows installation, please run in PowerShell:"
+    echo "   irm https://raw.githubusercontent.com/emonibnmustafa/anycodex/main/install.ps1 | iex"
+    exit 0
+  fi
 fi
 
 if ! command -v node >/dev/null 2>&1; then
@@ -33,19 +38,18 @@ NODE_PATH="$(command -v node)"
 GITHUB_REPO="${ANYCODEX_REPO:-emonibnmustafa/anycodex}"
 RAW_BASE_URL="https://raw.githubusercontent.com/${GITHUB_REPO}/main"
 
-echo "📦 Setting up AnyCodex directory at: $TARGET_DIR"
+echo "📦 Setting up Open AnyCodex at: $TARGET_DIR"
 mkdir -p "$TARGET_DIR"
 mkdir -p "$HOME/.codex"
 mkdir -p "$PLIST_DIR"
 
-# Check if running locally from cloned folder or piped via curl
 SCRIPT_DIR=""
 if [ -n "${BASH_SOURCE[0]}" ] && [ -f "${BASH_SOURCE[0]}" ]; then
   SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 fi
 
 if [ -n "$SCRIPT_DIR" ] && [ -f "$SCRIPT_DIR/adapter.mjs" ]; then
-  echo "📁 Copying local files..."
+  echo "📁 Copying local AnyCodex components..."
   cp "$SCRIPT_DIR/adapter.mjs" "$TARGET_DIR/adapter.mjs"
   cp "$SCRIPT_DIR/codex_switch.py" "$TARGET_DIR/codex_switch.py"
   cp "$SCRIPT_DIR/uninstall.sh" "$TARGET_DIR/uninstall.sh" 2>/dev/null || true
@@ -53,7 +57,7 @@ if [ -n "$SCRIPT_DIR" ] && [ -f "$SCRIPT_DIR/adapter.mjs" ]; then
     cp "$SCRIPT_DIR/providers.example.json" "$TARGET_DIR/providers.example.json"
   fi
 else
-  echo "🌐 Downloading latest AnyCodex components..."
+  echo "🌐 Downloading latest Open AnyCodex components..."
   curl -fsSL "${RAW_BASE_URL}/adapter.mjs" -o "$TARGET_DIR/adapter.mjs"
   curl -fsSL "${RAW_BASE_URL}/codex_switch.py" -o "$TARGET_DIR/codex_switch.py"
   curl -fsSL "${RAW_BASE_URL}/uninstall.sh" -o "$TARGET_DIR/uninstall.sh" 2>/dev/null || true
@@ -73,7 +77,7 @@ if [[ ! -f "$HOME/.codex/custom_providers.json" ]]; then
 fi
 
 # 2. Configure launchd Background Service
-echo "⚙️  Configuring background gateway service..."
+echo "⚙️  Configuring background gateway daemon..."
 cat << LAUNCHD_EOF > "$PLIST_FILE"
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -103,64 +107,54 @@ cat << LAUNCHD_EOF > "$PLIST_FILE"
 </plist>
 LAUNCHD_EOF
 
-# Restart service
+# Restart launchd service
 launchctl unload "$PLIST_FILE" 2>/dev/null || true
 launchctl load -w "$PLIST_FILE"
 
-# 3. Add Shell Aliases
-SHELL_RC="$HOME/.zshrc"
-if [[ "$SHELL" == *"bash"* ]]; then
-  SHELL_RC="$HOME/.bashrc"
-fi
+# 3. Add Shell Helpers
+add_shell_helpers() {
+  local RC_FILE="$1"
+  if [[ -f "$RC_FILE" ]]; then
+    if ! grep -q "anycodex" "$RC_FILE"; then
+      cat << 'RC_EOF' >> "$RC_FILE"
 
-ALIAS_BLOCK="
-# --- AnyCodex CLI ---
-alias anycodex=\"python3 $TARGET_DIR/codex_switch.py\"
-alias usemeta=\"python3 $TARGET_DIR/codex_switch.py use meta\"
-alias useopenai=\"python3 $TARGET_DIR/codex_switch.py use openai\"
-alias setmeta=\"python3 $TARGET_DIR/codex_switch.py set-key meta\"
-# --------------------"
-
-if ! grep -q "AnyCodex CLI" "$SHELL_RC" 2>/dev/null; then
-  echo "$ALIAS_BLOCK" >> "$SHELL_RC"
-  echo "✅ Added 'anycodex', 'usemeta', 'useopenai' aliases to $SHELL_RC"
-fi
-
-# Link into user path if available
-if [[ -w "/usr/local/bin" ]]; then
-  ln -sf "$TARGET_DIR/codex_switch.py" "/usr/local/bin/anycodex" 2>/dev/null || true
-elif mkdir -p "$HOME/.local/bin" 2>/dev/null; then
-  ln -sf "$TARGET_DIR/codex_switch.py" "$HOME/.local/bin/anycodex" 2>/dev/null || true
-fi
-
-# 4. Optional 1-Click Interactive Setup (works even when piped via curl | bash)
-if [ -e /dev/tty ]; then
-  exec < /dev/tty
-  echo ""
-  echo "-----------------------------------------------------"
-  echo "⚡ Quick Setup:"
-  read -p "👉 Would you like to enter your Meta API Key right now? (y/n, default: y): " setup_now
-  setup_now=${setup_now:-y}
-  if [[ "$setup_now" =~ ^[Yy]$ ]]; then
-    read -p "🔑 Paste your Meta API Key: " user_key
-    if [[ -n "$user_key" ]]; then
-      python3 "$TARGET_DIR/codex_switch.py" set-key meta "$user_key"
-      python3 "$TARGET_DIR/codex_switch.py" use meta
-      echo "🎉 Meta Muse Spark activated! You are ready to code."
+# --- Open AnyCodex CLI Helpers ---
+anycodex() { python3 "$HOME/.codex/anycodex/codex_switch.py" "$@"; }
+usemeta() { anycodex use meta; }
+useopenai() { anycodex use openai; }
+setmeta() { anycodex set-key meta "$1"; }
+# ---------------------------------
+RC_EOF
+      echo "✅ Added CLI shortcuts (anycodex, usemeta, useopenai) to $RC_FILE"
     fi
   fi
-  echo "-----------------------------------------------------"
+}
+
+add_shell_helpers "$HOME/.zshrc"
+add_shell_helpers "$HOME/.bashrc"
+
+# 4. Interactive Dual-App Setup or API Key
+echo ""
+echo "============================================================"
+echo "           🎉 Open AnyCodex Core Setup Complete!            "
+echo "============================================================"
+echo "Gateway running on: http://127.0.0.1:8765/v1"
+echo ""
+
+if [[ "$1" == "--dual-app" ]]; then
+  python3 "$TARGET_DIR/codex_switch.py" dual-app
+else
+  echo "💡 TIP: Want to run official ChatGPT Plus AND Open AnyCodex"
+  echo "   side-by-side at the exact same time without switching?"
+  echo "   Run: anycodex dual-app"
 fi
 
 echo ""
-echo "🎉 AnyCodex installation complete!"
+echo "Commands to get started:"
+echo "  anycodex status             -> View active provider & health"
+echo "  anycodex dual-app           -> Setup standalone side-by-side app"
+echo "  anycodex use meta           -> Switch to Meta Muse Spark (Free Unlimited)"
+echo "  anycodex use openai         -> Switch back to official ChatGPT Plus"
+echo "  anycodex list               -> List all available providers"
 echo ""
-echo "Quick Start Commands:"
-echo "  • Reload shell:   source $SHELL_RC"
-echo "  • Switch to Meta:  usemeta   (or: anycodex use meta)"
-echo "  • Set API Key:     setmeta \"YOUR_KEY\""
-echo "  • Back to Plus:    useopenai"
-echo "  • Check Status:    anycodex status"
-echo "  • Add New LLM:     anycodex add"
-echo ""
-echo "====================================================="
+echo "Restart your terminal or run: source ~/.zshrc"

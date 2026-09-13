@@ -2,3 +2,10 @@ __pycache__/
 *.pyc
 *.log
 .DS_Store
+*.key
+*key.txt
+custom_providers.json
+*.sqlite*
+*.sock
+*.app
+.tmp/
